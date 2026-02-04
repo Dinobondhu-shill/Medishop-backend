@@ -4,7 +4,6 @@ import { prisma } from "../../lib/prisma";
 
 
 const createMedicine = async(data: Medicine) => {
-    console.log('Medicine service is working!', data);
 
  
     const newMedicine = await prisma.medicine.create({
