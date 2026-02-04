@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+}
+
+model Shop {
+  id        Int      @id @default(autoincrement())
+  shopName  String
+  address   String
+  phone     String
+  email     String   @unique
+  sellerId  Int      @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  // seller    User       @relation(fields: [sellerId], references: [id])
+  medicines Medicine[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  imgUrl      String?
+  createdAt   DateTime @default(now())
+
+  
+  medicines Medicine[]
+}
+
+model Medicine {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  imgUrl       String?
+  manufacturer String
+  tags         String[]
+  price        Decimal  @db.Decimal(10, 2)
+  stock        Int
+  isActive     Boolean  @default(true)
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Foreign Keys
+  categoryId Int
+  shopId     Int
+  sellerId   Int
+
+  // // Relations
+  category Category @relation(fields: [categoryId], references: [id])
+  shop       Shop        @relation(fields: [shopId], references: [id])
+  // seller     User        @relation(fields: [sellerId], references: [id])
+  reviews    Review[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  @@index([categoryId])
+  @@index([shopId])
+  @@index([sellerId])
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  // user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id         Int @id @default(autoincrement())
+  cartId     Int
+  medicineId Int
+  quantity   Int
+
+  // // Relations
+  cart     Cart     @relation(fields: [cartId], references: [id])
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+
+  @@unique([cartId, medicineId])
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  orderNumber     String        @unique
+  userId          Int
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   PaymentMethod @default(COD)
+  shippingAddress String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  // user       User        @relation(fields: [userId], references: [id])
+ 
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id              Int     @id @default(autoincrement())
+  orderId         Int
+  medicineId      Int
+  sellerId        Int
+  quantity        Int
+  priceAtPurchase Decimal @db.Decimal(10, 2)
+
+  // // Relations
+  order    Order    @relation(fields: [orderId], references: [id])
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+  // seller   User     @relation(fields: [sellerId], references: [id])
+
+  @@index([orderId])
+  @@index([sellerId])
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  medicineId Int
+  rating     Int
+  comment    String?
+  imgUrl     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // // Relations
+  // user     User     @relation(fields: [userId], references: [id])
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+
+  @@unique([userId, medicineId])
+}
