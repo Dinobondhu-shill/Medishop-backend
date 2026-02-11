@@ -6,6 +6,7 @@ import { shopRouter } from "./modules/shop/shop.router";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import { userRouter } from "./modules/user/user.router";
+import { cartRouter } from "./modules/cart/cart.router";
 
 const app: Application = express();
 
@@ -26,6 +27,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api/v1", medicineRouter);
 app.use("/api/v1", categoryRouter);
 app.use("/api/v1", shopRouter);
-app.use("/api/v1/", userRouter);
+app.use("/api/v1", userRouter);
+app.use("/api/v1/cart", cartRouter);
 
 export default app;
