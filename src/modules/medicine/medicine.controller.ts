@@ -3,6 +3,7 @@ import { medicineServices } from "./medicine.service";
 
 const createMedicine = async (req: Request, res: Response) => {
     const data = req.body;
+    
 
    try {
        const result = await medicineServices.createMedicine(data);

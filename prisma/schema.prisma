@@ -13,12 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  CUSTOMER
-  SELLER
-  ADMIN
-}
-
 enum UserStatus {
   ACTIVE
   BANNED
@@ -160,7 +154,7 @@ model Review {
   updatedAt  DateTime @updatedAt
 
   // // Relations
-  // user     User     @relation(fields: [userId], references: [id])
+  // User     User     @relation(fields: [userId], references: [id])
   medicine Medicine @relation(fields: [medicineId], references: [id])
 
   @@unique([userId, medicineId])
@@ -176,6 +170,11 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+
+  role    String   @default("CUSTOMER")
+  phone   String?
+  status  String   @default("ACTIVE")
+  address String?
 
   @@unique([email])
   @@map("user")
