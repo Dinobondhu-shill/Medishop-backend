@@ -1,4 +1,5 @@
-import { Category } from "@prisma/client";
+
+import { Category } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 

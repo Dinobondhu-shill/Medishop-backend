@@ -1,9 +1,9 @@
 import { prisma } from "../../lib/prisma";
 
-const createShop = async (data: any) => {
+const createShop = async (data: any, sellerId: string) => {
 
     const newShop = await prisma.shop.create({
-        data: data
+        data: { ...data, sellerId }
     });
 
     return newShop;

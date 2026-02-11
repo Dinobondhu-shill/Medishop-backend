@@ -36,11 +36,11 @@ model Shop {
   address   String
   phone     String
   email     String   @unique
-  sellerId  Int      @unique
+  sellerId  String   @unique
   createdAt DateTime @default(now())
 
   // Relations
-  // seller    User       @relation(fields: [sellerId], references: [id])
+  seller    User       @relation(fields: [sellerId], references: [id])
   medicines Medicine[]
 }
 
@@ -71,12 +71,12 @@ model Medicine {
   // Foreign Keys
   categoryId Int
   shopId     Int
-  sellerId   Int
+  sellerId   String
 
   // // Relations
   category   Category    @relation(fields: [categoryId], references: [id])
   shop       Shop        @relation(fields: [shopId], references: [id])
-  // seller     User        @relation(fields: [sellerId], references: [id])
+  seller     User        @relation(fields: [sellerId], references: [id])
   reviews    Review[]
   orderItems OrderItem[]
   cartItems  CartItem[]
@@ -88,12 +88,12 @@ model Medicine {
 
 model Cart {
   id        Int      @id @default(autoincrement())
-  userId    Int      @unique
+  userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  // user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
   cartItems CartItem[]
 }
 
@@ -113,7 +113,7 @@ model CartItem {
 model Order {
   id              Int           @id @default(autoincrement())
   orderNumber     String        @unique
-  userId          Int
+  userId          String
   totalAmount     Decimal       @db.Decimal(10, 2)
   status          OrderStatus   @default(PENDING)
   paymentMethod   PaymentMethod @default(COD)
@@ -122,7 +122,7 @@ model Order {
   updatedAt       DateTime      @updatedAt
 
   // Relations
-  // user       User        @relation(fields: [userId], references: [id])
+  user       User        @relation(fields: [userId], references: [id])
   orderItems OrderItem[]
 }
 
@@ -130,14 +130,14 @@ model OrderItem {
   id              Int     @id @default(autoincrement())
   orderId         Int
   medicineId      Int
-  sellerId        Int
+  sellerId        String
   quantity        Int
   priceAtPurchase Decimal @db.Decimal(10, 2)
 
   // // Relations
   order    Order    @relation(fields: [orderId], references: [id])
   medicine Medicine @relation(fields: [medicineId], references: [id])
-  // seller   User     @relation(fields: [sellerId], references: [id])
+  seller   User     @relation(fields: [sellerId], references: [id])
 
   @@index([orderId])
   @@index([sellerId])
@@ -145,7 +145,7 @@ model OrderItem {
 
 model Review {
   id         Int      @id @default(autoincrement())
-  userId     Int
+  userId     String
   medicineId Int
   rating     Int
   comment    String?
@@ -154,7 +154,7 @@ model Review {
   updatedAt  DateTime @updatedAt
 
   // // Relations
-  // User     User     @relation(fields: [userId], references: [id])
+  User     User     @relation(fields: [userId], references: [id])
   medicine Medicine @relation(fields: [medicineId], references: [id])
 
   @@unique([userId, medicineId])
@@ -171,10 +171,16 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role    String   @default("CUSTOMER")
-  phone   String?
-  status  String   @default("ACTIVE")
-  address String?
+  role       String      @default("CUSTOMER")
+  phone      String?
+  status     String      @default("ACTIVE")
+  address    String?
+  medicines  Medicine[]
+  cart       Cart?
+  orders     Order[]
+  shop       Shop?
+  orderItems OrderItem[]
+  reviews    Review[]
 
   @@unique([email])
   @@map("user")

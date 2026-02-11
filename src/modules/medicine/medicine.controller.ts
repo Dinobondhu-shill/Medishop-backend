@@ -3,10 +3,17 @@ import { medicineServices } from "./medicine.service";
 
 const createMedicine = async (req: Request, res: Response) => {
     const data = req.body;
+    const user = req.user;
+
+    if(!user) { 
+        return res.status(401).json({
+            message: 'Unauthorized, Only Seller can add medicine'
+        })
+    }
     
 
    try {
-       const result = await medicineServices.createMedicine(data);
+       const result = await medicineServices.createMedicine(data, user.id as string);
 
        res.status(201).json({
            message: 'New Medicine Added Successfully',

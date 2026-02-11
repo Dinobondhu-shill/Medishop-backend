@@ -1,0 +1,38 @@
+-- AlterTable
+ALTER TABLE "Cart" ALTER COLUMN "userId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Medicine" ALTER COLUMN "sellerId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Order" ALTER COLUMN "userId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "OrderItem" ALTER COLUMN "sellerId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Review" ALTER COLUMN "userId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Shop" ALTER COLUMN "sellerId" SET DATA TYPE TEXT;
+
+-- DropEnum
+DROP TYPE "Role";
+
+-- AddForeignKey
+ALTER TABLE "Shop" ADD CONSTRAINT "Shop_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Medicine" ADD CONSTRAINT "Medicine_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Cart" ADD CONSTRAINT "Cart_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
